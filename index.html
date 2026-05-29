@@ -80,28 +80,29 @@
   .cat-body { display: none; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
   .cat-body.open { display: block; }
 
-/* ajout boutons */
-.cat-actions {
-  margin-left: 10px;
-  display: inline-flex;
-  gap: 6px;
-}
 
-.mini-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
+  .cat-actions {
+    margin-left: 10px;
+    display: inline-flex;
+    gap: 6px;
+  }
 
-.mini-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+  .mini-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .mini-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   /* ERROR ITEMS */
   .err-item { display: grid; grid-template-columns: 1fr 1fr auto auto; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
   .err-item:last-child { border-bottom: none; }
