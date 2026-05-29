@@ -138,13 +138,15 @@
   <header>
     <div class="eyebrow">CRPE 2026 — Bil</div>
     <h1>Suivi des <span>Erreurs</span></h1>
-    <div class="subtitle" id="headerSubtitle">Sélectionne une matière pour commencer</div>
+    <div class="subtitle" id="headerSubtitle">Chargement des matières...</div>
   </header>
 
   <!-- PAGE ACCUEIL -->
   <div id="page-accueil">
     <div class="accueil-label">Choisir une matière</div>
-    <div class="matieres-grid" id="matieresGrid"></div>
+    <div class="matieres-grid" id="matieresGrid">
+      <div style="color:var(--muted); text-align:center; padding:40px;">Chargement...</div>
+    </div>
   </div>
 
   <!-- PAGE ERREURS -->
@@ -218,21 +220,15 @@
 </div>
 
 <script>
-const MATIERES = [
-  { id: 'francais',  nom: 'Français',   fichier: 'cat-francais.json',  couleur: '#c8a96e' },
-  { id: 'maths',     nom: 'Maths',       fichier: 'cat-maths.json',     couleur: '#5a9fd4' },
-  { id: 'sciences',  nom: 'Sciences',    fichier: 'cat-sciences.json',  couleur: '#7c6fcd' },
-  { id: 'techno',    nom: 'Techno',      fichier: 'cat-techno.json',    couleur: '#ba6fa0' },
-  { id: 'chimie',    nom: 'Chimie',      fichier: 'cat-chimie.json',    couleur: '#5a9fd4' },
-  { id: 'histoire',  nom: 'Histoire',    fichier: 'cat-histoire.json',  couleur: '#c87c4a' },
-  { id: 'geo',       nom: 'Géographie',  fichier: 'cat-geo.json',       couleur: '#6fba8a' },
-  { id: 'emc',       nom: 'EMC',         fichier: 'cat-emc.json',       couleur: '#c8a96e' },
-  { id: 'anglais',   nom: 'Anglais',     fichier: 'cat-anglais.json',   couleur: '#6fba8a' },
-  { id: 'eps',       nom: 'EPS',         fichier: 'cat-eps.json',       couleur: '#c87c4a' },
-  { id: 'cse',       nom: 'CSE',         fichier: 'cat-cse.json',       couleur: '#7c6fcd' },
-];
+// Plus de MATIERES en dur ! Elles sont chargées depuis matieres.json
 
-// CATEGORIES PAR DÉFAUT (si les fichiers JSON sont absents)
+let matieresList = [];      // Liste chargée depuis le JSON
+let currentMatiere = null;
+let currentCats = [];
+let currentFilter = 'all';
+let openCats = {};
+
+// CATEGORIES PAR DÉFAUT pour chaque matière (si fichier JSON absent)
 const DEFAULT_CATEGORIES = {
   francais: { categories: [
     { nom: "Orthographe", sous_categories: ["Accords", "Homophones", "Pluriels"] },
@@ -243,13 +239,16 @@ const DEFAULT_CATEGORIES = {
     { nom: "Calcul", sous_categories: ["Opérations", "Fractions", "Pourcentages"] },
     { nom: "Géométrie", sous_categories: ["Figures", "Périmètres/Aires", "Angles"] },
     { nom: "Problèmes", sous_categories: ["Modélisation", "Grandeurs", "Logique"] }
+  ]},
+  sciences: { categories: [
+    { nom: "Biologie", sous_categories: ["Cellules", "Reproduction", "Écosystèmes"] },
+    { nom: "Physique", sous_categories: ["Mouvement", "Énergie", "Électricité"] }
+  ]},
+  histoire: { categories: [
+    { nom: "Dates", sous_categories: ["Révolution", "Guerres", "Régimes"] },
+    { nom: "Personnages", sous_categories: ["Rois", "Présidents", "Scientifiques"] }
   ]}
 };
-
-let currentMatiere = null;
-let currentCats = [];
-let currentFilter = 'all';
-let openCats = {};
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -304,10 +303,30 @@ function showError(msg) {
   setTimeout(() => errorDiv.classList.remove('show'), 4000);
 }
 
-// ACCUEIL
+// Chargement des matières depuis matieres.json
+async function loadMatieres() {
+  try {
+    const response = await fetch('matieres.json');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    matieresList = data;
+    document.getElementById('headerSubtitle').textContent = 'Sélectionne une matière pour commencer';
+    renderAccueil();
+  } catch (error) {
+    console.error('Erreur chargement matieres.json:', error);
+    document.getElementById('headerSubtitle').textContent = 'Erreur : matieres.json introuvable';
+    document.getElementById('matieresGrid').innerHTML = '<div style="color:var(--error); text-align:center; padding:40px;">❌ Fichier matieres.json manquant ou invalide</div>';
+  }
+}
+
 function renderAccueil() {
   const grid = document.getElementById('matieresGrid');
-  grid.innerHTML = MATIERES.map(m => {
+  if (!matieresList.length) {
+    grid.innerHTML = '<div style="color:var(--muted); text-align:center; padding:40px;">Aucune matière disponible</div>';
+    return;
+  }
+  
+  grid.innerHTML = matieresList.map(m => {
     const data = getData(m.id);
     const aRevoir = data.filter(e => e.status === 'À revoir').length;
     return `
@@ -341,12 +360,10 @@ function goAccueil() {
 }
 
 async function goMatiere(id) {
-  const m = MATIERES.find(x => x.id === id);
+  const m = matieresList.find(x => x.id === id);
   if (!m) return;
   currentMatiere = m;
   currentFilter = 'all';
-  
-  // Nettoyer openCats avant nouveau chargement
   openCats = {};
 
   try {
@@ -356,7 +373,6 @@ async function goMatiere(id) {
     currentCats = json.categories || [];
   } catch(e) {
     console.warn('Impossible de charger', m.fichier, e);
-    // Utiliser les catégories par défaut si disponibles
     if (DEFAULT_CATEGORIES[id]) {
       currentCats = DEFAULT_CATEGORIES[id].categories;
       showError(`Fichier ${m.fichier} introuvable. Utilisation des catégories par défaut.`);
@@ -366,12 +382,10 @@ async function goMatiere(id) {
     }
   }
 
-  // Mettre à jour l'interface
   document.getElementById('page-accueil').style.display = 'none';
   document.getElementById('page-erreurs').style.display = 'block';
   document.getElementById('headerSubtitle').textContent = m.nom + ' — erreurs à l\'écrit';
 
-  // Réinitialiser les filtres visuels
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
 
@@ -549,7 +563,6 @@ function renderErreurs() {
     container.appendChild(section);
   });
   
-  // Réattacher les événements
   document.querySelectorAll('.cat-header').forEach(header => {
     const catName = header.dataset.cat;
     header.removeEventListener('click', () => toggleCat(catName));
@@ -567,10 +580,8 @@ function renderErreurs() {
   });
 }
 
-// INITIALISATION DES ÉVÉNEMENTS
+// INITIALISATION
 function init() {
-  renderAccueil();
-  
   document.getElementById('backBtn').addEventListener('click', goAccueil);
   document.getElementById('addBtn').addEventListener('click', addError);
   document.getElementById('resetBtn').addEventListener('click', resetMatiere);
@@ -579,6 +590,8 @@ function init() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => setFilter(btn.dataset.filter, btn));
   });
+  
+  loadMatieres();
 }
 
 init();
