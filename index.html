@@ -5,221 +5,192 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Suivi des Erreurs — Bil</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --bg: #0e0e0f; --surface: #17171a; --surface2: #1e1e23;
-    --border: #2a2a32; --accent: #c8a96e; --accent2: #7c6fcd;
-    --text: #e8e6e0; --muted: #6b6872; --done: #4a7c59;
-    --done-text: #89c49a; --warning: #c87c4a; --warning-text: #e8b48a;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; padding: 40px 20px; }
-  .noise { position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); opacity: 0.4; }
-  .container { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+:root {
+  --bg:#0e0e0f;--surface:#17171a;--surface2:#1e1e23;
+  --border:#2a2a32;--accent:#c8a96e;
+  --text:#e8e6e0;--muted:#6b6872;
+  --warning-text:#e8b48a;--done-text:#89c49a;
+}
 
-  header { margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 28px; }
-  .eyebrow { font-size: 11px; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
-  h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 5vw, 44px); font-weight: 700; line-height: 1.1; margin-bottom: 14px; }
-  h1 span { color: var(--accent); }
-  .subtitle { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;padding:40px 20px;}
 
-  #page-accueil { display: block; }
-  #page-erreurs { display: none; }
+.container{max-width:900px;margin:auto;}
 
-  .accueil-label { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+/* HEADER */
+header{margin-bottom:30px;}
+h1{font-family:'Playfair Display';}
 
-  .matieres-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+/* TOOLBAR */
+.toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:15px 0 25px;
+}
 
-  .matiere-btn {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 18px 20px; cursor: pointer;
-    transition: all 0.2s; text-align: left; display: flex;
-    flex-direction: column; gap: 8px;
-  }
-  .matiere-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .matiere-name { font-size: 14px; letter-spacing: 0.05em; color: var(--text); }
-  .matiere-count { font-size: 10px; color: var(--muted); }
-  .matiere-dot { width: 6px; height: 6px; border-radius: 50%; }
+.toolbar button{
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:8px 10px;
+  cursor:pointer;
+  font-size:11px;
+  font-family:'DM Mono', monospace;
+}
 
-  .back-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--muted); cursor: pointer; background: none; border: none;
-    margin-bottom: 28px; transition: color 0.15s; padding: 0;
-    font-family: 'DM Mono', monospace;
-  }
-  .back-btn:hover { color: var(--accent); }
+.toolbar button:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
 
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 28px; }
-  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
-  .stat-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  .stat-value { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; }
-  .stat-value.total { color: var(--text); }
-  .stat-value.review { color: var(--warning-text); }
-  .stat-value.mastered { color: var(--done-text); }
+/* CAT */
+.cat{
+  background:var(--surface);
+  border:1px solid var(--border);
+  margin-bottom:10px;
+  border-radius:6px;
+  overflow:hidden;
+}
+.cat-header{
+  padding:10px;
+  display:flex;
+  justify-content:space-between;
+  cursor:pointer;
+}
+.cat-body{display:none;padding:10px;border-top:1px solid var(--border);}
+.cat-body.open{display:block;}
 
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
-  .filter-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
-  .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.08); }
-
-  .cat-section { margin-bottom: 10px; }
-  .cat-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
-  .cat-header.open { border-radius: 8px 8px 0 0; border-bottom-color: transparent; }
-  .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .cat-name { font-size: 13px; letter-spacing: 0.08em; flex: 1; }
-  .cat-count { font-size: 10px; padding: 3px 10px; border-radius: 20px; background: var(--surface2); }
-  .cat-toggle { font-size: 10px; }
-  .cat-header.open .cat-toggle { transform: rotate(180deg); }
-
-  .cat-body { display: none; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; }
-  .cat-body.open { display: block; }
-
-  .err-item { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); }
-  .err-wrong { color: #e07070; }
-  .err-right { color: var(--done-text); }
-  .err-meta { font-size: 10px; color: var(--muted); }
-  .status-badge { font-size: 9px; padding: 3px 8px; border-radius: 20px; cursor: pointer; }
-  .del-btn { background: none; border: none; cursor: pointer; }
-
-  .form-section { margin-top: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
-  .form-header { padding: 16px 18px; border-bottom: 1px solid var(--border); color: var(--accent); }
-  .form-body { padding: 18px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .form-field { display: flex; flex-direction: column; gap: 5px; }
-  .form-label { font-size: 10px; color: var(--muted); }
-  .form-field input, .form-field select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 9px; }
-
-  .add-btn { width: 100%; padding: 11px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; margin-top: 10px; }
-  .add-btn.inactive { opacity: 0.5; cursor: not-allowed; }
-
-  .reset-btn { margin-top: 40px; border: 1px solid #2a2a32; background: transparent; color: #3a3a44; padding: 10px; }
-
+.subcat{
+  padding:5px 10px;
+  font-size:12px;
+  color:var(--muted);
+}
 </style>
 </head>
 
 <body>
-<div class="noise"></div>
+
 <div class="container">
 
 <header>
-  <div class="eyebrow">CRPE 2026 — Bil</div>
-  <h1>Suivi des <span>Erreurs</span></h1>
-  <div class="subtitle" id="headerSubtitle">Sélectionne une matière pour commencer</div>
+  <h1>Suivi des erreurs</h1>
 </header>
 
-<div id="page-accueil">
-  <div class="accueil-label">Choisir une matière</div>
-  <div class="matieres-grid" id="matieresGrid"></div>
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button onclick="addCat()">+ Catégorie</button>
+  <button onclick="editCat()">Modifier Catégorie</button>
+  <button onclick="deleteCat()">Supprimer Catégorie</button>
+  <button onclick="addSubcat()">+ Sous-catégorie</button>
+  <button onclick="editSubcat()">Modifier Sous-cat</button>
+  <button onclick="deleteSubcat()">Supprimer Sous-cat</button>
 </div>
 
-<div id="page-erreurs">
-
-<button class="back-btn" onclick="goAccueil()">← Retour</button>
-
-<div class="stats">
-  <div class="stat"><div class="stat-label">Total</div><div class="stat-value" id="statTotal">0</div></div>
-  <div class="stat"><div class="stat-label">À revoir</div><div class="stat-value" id="statReview">0</div></div>
-  <div class="stat"><div class="stat-label">Maîtrisées</div><div class="stat-value" id="statMastered">0</div></div>
-</div>
-
-<div class="filters">
-  <button class="filter-btn active" onclick="setFilter('all', this)">Toutes</button>
-  <button class="filter-btn" onclick="setFilter('À revoir', this)">À revoir</button>
-  <button class="filter-btn" onclick="setFilter('En cours', this)">En cours</button>
-  <button class="filter-btn" onclick="setFilter('Maîtrisé', this)">Maîtrisées</button>
-</div>
-
-<div id="categoriesContainer"></div>
-
-<div class="form-section">
-  <div class="form-header">Ajouter une erreur</div>
-  <div class="form-body">
-    <div class="form-grid">
-      <div class="form-field">
-        <label class="form-label">Catégorie</label>
-        <select id="fCat" onchange="updateSubcats()"></select>
-      </div>
-      <div class="form-field">
-        <label class="form-label">Sous-catégorie</label>
-        <select id="fSub"></select>
-      </div>
-      <div class="form-field">
-        <label class="form-label">Erreur</label>
-        <input id="fErr" />
-      </div>
-      <div class="form-field">
-        <label class="form-label">Correction</label>
-        <input id="fCor" />
-      </div>
-      <div class="form-field">
-        <label class="form-label">Statut</label>
-        <select id="fStatus">
-          <option>À revoir</option>
-          <option>En cours</option>
-          <option>Maîtrisé</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <label class="form-label">Révision dans</label>
-        <select id="fRevision">
-          <option value="0">Aujourd'hui</option>
-          <option value="1" selected>1 jour</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="add-btn" onclick="addError()">Ajouter</button>
-
-    <!-- 🔥 BOUTON MODIFIÉ -->
-    <button class="add-btn" style="margin-top:8px" onclick="addSubcategory()">+ Nouvelle sous-catégorie</button>
-  </div>
-</div>
+<div id="cats"></div>
 
 </div>
 
 <script>
 
-const MATIERES = [
-  { id:'francais', nom:'Français', fichier:'cat-francais.json', couleur:'#c8a96e' }
+let currentCats = [
+  {
+    nom:"Orthographe",
+    sous_categories:[
+      "a / à",
+      "et / est",
+      "son / sont"
+    ]
+  }
 ];
 
-let currentMatiere=null;
-let currentCats=[];
-let openCats={};
-let currentFilter='all';
+let selectedCat = null;
 
-function getData(id){
-  return JSON.parse(localStorage.getItem('bil_err_'+id)||'[]');
+/* RENDER */
+function render(){
+  const c = document.getElementById("cats");
+  c.innerHTML="";
+
+  currentCats.forEach(cat=>{
+    const div=document.createElement("div");
+    div.className="cat";
+
+    div.innerHTML=`
+      <div class="cat-header" onclick="selectCat('${cat.nom}')">
+        <strong>${cat.nom}</strong>
+        <span>${cat.sous_categories.length}</span>
+      </div>
+      <div class="cat-body ${selectedCat===cat.nom?'open':''}">
+        ${cat.sous_categories.map(s=>`<div class="subcat">${s}</div>`).join("")}
+      </div>
+    `;
+
+    c.appendChild(div);
+  });
 }
 
-function saveData(id,d){
-  localStorage.setItem('bil_err_'+id, JSON.stringify(d));
+function selectCat(name){
+  selectedCat = name;
+  render();
 }
 
-function goAccueil(){
-  location.reload();
-}
-
-function updateSubcats(){
-  const cat = currentCats.find(c=>c.nom===fCat.value);
-  fSub.innerHTML = cat ? cat.sous_categories.map(s=>`<option>${s}</option>`).join('') : '';
-}
-
-function addSubcategory(){
-  const catName = fCat.value;
-  const cat = currentCats.find(c=>c.nom===catName);
-  if(!cat) return;
-
-  const name = prompt("Nom de la sous-catégorie ?");
+/* CAT */
+function addCat(){
+  const name = prompt("Nom de la catégorie ?");
   if(!name) return;
-
-  if(!cat.sous_categories.includes(name)){
-    cat.sous_categories.push(name);
-  }
-
-  updateSubcats();
-  alert("Sous-catégorie ajoutée !");
+  currentCats.push({nom:name,sous_categories:[]});
+  render();
 }
+
+function editCat(){
+  const old = prompt("Nom catégorie ?");
+  const cat = currentCats.find(c=>c.nom===old);
+  if(!cat) return alert("introuvable");
+  const neu = prompt("Nouveau nom ?",cat.nom);
+  if(!neu) return;
+  cat.nom = neu;
+  render();
+}
+
+function deleteCat(){
+  const name = prompt("Nom catégorie ?");
+  currentCats = currentCats.filter(c=>c.nom!==name);
+  render();
+}
+
+/* SUBCAT */
+function addSubcat(){
+  if(!selectedCat) return alert("choisis une catégorie");
+  const cat = currentCats.find(c=>c.nom===selectedCat);
+  const name = prompt("Sous-catégorie ?");
+  if(!name) return;
+  cat.sous_categories.push(name);
+  render();
+}
+
+function editSubcat(){
+  if(!selectedCat) return;
+  const cat = currentCats.find(c=>c.nom===selectedCat);
+  const old = prompt("Sous-cat ?");
+  const i = cat.sous_categories.indexOf(old);
+  if(i===-1) return;
+  const neu = prompt("nouveau nom ?",old);
+  if(!neu) return;
+  cat.sous_categories[i]=neu;
+  render();
+}
+
+function deleteSubcat(){
+  if(!selectedCat) return;
+  const cat = currentCats.find(c=>c.nom===selectedCat);
+  const name = prompt("Sous-cat ?");
+  cat.sous_categories = cat.sous_categories.filter(s=>s!==name);
+  render();
+}
+
+render();
 
 </script>
 
