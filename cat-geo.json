@@ -1,0 +1,23 @@
+{
+  "matiere": "Géographie",
+  "couleur": "#6fba8a",
+  "categories": [
+    {
+      "nom": "Noms de lieux",
+      "sous_categories": [
+        "Pays et capitales",
+        "Fleuves et mers",
+        "Reliefs — massifs, chaînes, volcans…",
+        "Régions et départements français"
+      ]
+    },
+    {
+      "nom": "Vocabulaire géographique",
+      "sous_categories": [
+        "Termes physiques — isthme, péninsule, estuaire…",
+        "Termes humains — métropole, conurbation, densité…",
+        "Termes climatiques — tropical, méditerranéen, aride…"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "matiere": "EMC",
+  "couleur": "#c8a96e",
+  "categories": [
+    {
+      "nom": "Vocabulaire civique",
+      "sous_categories": [
+        "Institutions — République, Assemblée, Sénat, Constitution…",
+        "Valeurs — laïcité, fraternité, égalité, liberté…",
+        "Droits et devoirs — citoyen, suffrage, démocratie…"
+      ]
+    }
+  ]
+}

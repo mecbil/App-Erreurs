@@ -1,0 +1,35 @@
+{
+  "matiere": "Histoire",
+  "couleur": "#c87c4a",
+  "categories": [
+    {
+      "nom": "Noms de personnages",
+      "sous_categories": [
+        "Personnages politiques — rois, présidents, chefs d'État…",
+        "Personnages historiques — généraux, philosophes, savants…"
+      ]
+    },
+    {
+      "nom": "Noms de lieux",
+      "sous_categories": [
+        "Villes et régions",
+        "Batailles et traités",
+        "Pays et empires"
+      ]
+    },
+    {
+      "nom": "Dates",
+      "sous_categories": [
+        "Dates clés mal orthographiées en toutes lettres"
+      ]
+    },
+    {
+      "nom": "Vocabulaire historique",
+      "sous_categories": [
+        "Termes politiques — monarchie, République, féodalité…",
+        "Termes économiques — mercantilisme, colonisation…",
+        "Termes religieux — schisme, inquisition, laïcité…"
+      ]
+    }
+  ]
+}

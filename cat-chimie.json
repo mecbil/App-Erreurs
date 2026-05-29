@@ -1,0 +1,21 @@
+{
+  "matiere": "Chimie",
+  "couleur": "#5a9fd4",
+  "categories": [
+    {
+      "nom": "Orthographe des termes",
+      "sous_categories": [
+        "Éléments — oxygène, hydrogène, azote, carbone…",
+        "Composés — dioxyde, hydroxyde, acide…",
+        "Réactions — oxydation, réduction, électrolyse…"
+      ]
+    },
+    {
+      "nom": "Symboles chimiques",
+      "sous_categories": [
+        "Symboles des éléments en toutes lettres",
+        "Formules moléculaires orthographiées"
+      ]
+    }
+  ]
+}

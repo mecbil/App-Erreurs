@@ -1,0 +1,14 @@
+{
+  "matiere": "Techno",
+  "couleur": "#ba6fa0",
+  "categories": [
+    {
+      "nom": "Orthographe des termes techniques",
+      "sous_categories": [
+        "Matériaux — aluminium, polymère, composite…",
+        "Procédés — usinage, soudure, assemblage…",
+        "Numérique — algorithme, interface, protocole…"
+      ]
+    }
+  ]
+}

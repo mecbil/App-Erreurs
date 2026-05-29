@@ -1,0 +1,47 @@
+{
+  "matiere": "Anglais",
+  "couleur": "#6fba8a",
+  "categories": [
+    {
+      "nom": "Orthographe",
+      "sous_categories": [
+        "Mots fréquents mal orthographiés",
+        "Doublement de consonnes — running, stopped…",
+        "Terminaisons — -tion / -sion / -ness / -ful…"
+      ]
+    },
+    {
+      "nom": "Homophones",
+      "sous_categories": [
+        "there / their / they're",
+        "your / you're",
+        "its / it's",
+        "to / too / two",
+        "here / hear"
+      ]
+    },
+    {
+      "nom": "Conjugaison",
+      "sous_categories": [
+        "Irréguliers — go/went, be/was/were, have/had…",
+        "Formes en -ing — running, writing…",
+        "Troisième personne — he goes, she has…"
+      ]
+    },
+    {
+      "nom": "Formes verbales",
+      "sous_categories": [
+        "Passé simple — prétérit régulier et irrégulier",
+        "Futur — will / going to",
+        "Participe passé — done, gone, written…"
+      ]
+    },
+    {
+      "nom": "Vocabulaire",
+      "sous_categories": [
+        "Faux-amis — actually, eventually, library…",
+        "Mots courants mal orthographiés"
+      ]
+    }
+  ]
+}

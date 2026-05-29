@@ -1,0 +1,21 @@
+{
+  "matiere": "Sciences",
+  "couleur": "#7c6fcd",
+  "categories": [
+    {
+      "nom": "Orthographe des termes scientifiques",
+      "sous_categories": [
+        "Biologie — photosynthèse, cellule, chlorophylle…",
+        "Physique — énergie, gravité, électricité…",
+        "Astronomie — orbite, atmosphère, galaxie…"
+      ]
+    },
+    {
+      "nom": "Noms propres",
+      "sous_categories": [
+        "Savants — Newton, Darwin, Pasteur…",
+        "Espèces et classifications"
+      ]
+    }
+  ]
+}

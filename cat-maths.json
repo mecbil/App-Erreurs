@@ -1,0 +1,28 @@
+{
+  "matiere": "Maths",
+  "couleur": "#5a9fd4",
+  "categories": [
+    {
+      "nom": "Orthographe des termes",
+      "sous_categories": [
+        "Vocabulaire géométrique — parallèle, perpendiculaire, hypoténuse…",
+        "Vocabulaire arithmétique — numérateur, dénominateur, quotient…",
+        "Vocabulaire statistique — médiane, moyenne, fréquence…"
+      ]
+    },
+    {
+      "nom": "Noms propres",
+      "sous_categories": [
+        "Théorèmes — Pythagore, Thalès, Euclide…",
+        "Mathématiciens — Descartes, Fermat, Euclide…"
+      ]
+    },
+    {
+      "nom": "Symboles et notations",
+      "sous_categories": [
+        "Symboles mal orthographiés en toutes lettres",
+        "Abréviations — cm², m³, km/h…"
+      ]
+    }
+  ]
+}

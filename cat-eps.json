@@ -1,0 +1,14 @@
+{
+  "matiere": "EPS",
+  "couleur": "#c87c4a",
+  "categories": [
+    {
+      "nom": "Orthographe des termes sportifs",
+      "sous_categories": [
+        "Sports collectifs — basketball, volleyball, handball…",
+        "Termes techniques — coordination, équilibre, proprioception…",
+        "Termes physiologiques — endurance, fréquence cardiaque…"
+      ]
+    }
+  ]
+}

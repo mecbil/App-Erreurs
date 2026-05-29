@@ -1,0 +1,66 @@
+{
+  "matiere": "Français",
+  "couleur": "#c8a96e",
+  "categories": [
+    {
+      "nom": "Orthographe",
+      "sous_categories": [
+        "Accents — é è ê à ù",
+        "Mots fréquents mal orthographiés",
+        "Majuscules oubliées"
+      ]
+    },
+    {
+      "nom": "Homophones",
+      "sous_categories": [
+        "a / à",
+        "ou / où",
+        "et / est",
+        "son / sont",
+        "on / ont",
+        "ce / se",
+        "c'est / s'est / sait / sais",
+        "voir / voire",
+        "foi / fois",
+        "sa / ça",
+        "son / sang / sont / sent / cent",
+        "peu / peut / peux",
+        "ma / m'a",
+        "la / là / l'a"
+      ]
+    },
+    {
+      "nom": "Conjugaison",
+      "sous_categories": [
+        "Accord sujet-verbe",
+        "Verbes fréquents — être / avoir / faire / aller",
+        "Confusion passé / présent / participe",
+        "Infinitif / participe passé — er / é"
+      ]
+    },
+    {
+      "nom": "Grammaire",
+      "sous_categories": [
+        "Accord nom-adjectif",
+        "Accord participe passé avec être",
+        "Accord participe passé avec avoir",
+        "Pluriel des noms"
+      ]
+    },
+    {
+      "nom": "Style",
+      "sous_categories": [
+        "Phrases trop longues",
+        "Expressions figées — en train de / à côté de / vis-à-vis",
+        "Ponctuation — virgule / point / tiret"
+      ]
+    },
+    {
+      "nom": "Vocabulaire",
+      "sous_categories": [
+        "Mot mal orthographié",
+        "Mot mal employé"
+      ]
+    }
+  ]
+}

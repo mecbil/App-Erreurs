@@ -1,0 +1,15 @@
+{
+  "matiere": "CSE",
+  "couleur": "#7c6fcd",
+  "categories": [
+    {
+      "nom": "Vocabulaire institutionnel",
+      "sous_categories": [
+        "Textes officiels — circulaire, décret, arrêté, BO…",
+        "Acteurs — recteur, inspecteur, DASEN, PRAG…",
+        "Structure scolaire — cycle, socle commun, évaluation…",
+        "Pédagogie — différenciation, progression, séquence…"
+      ]
+    }
+  ]
+}
