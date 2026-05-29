@@ -5,194 +5,583 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Suivi des Erreurs — Bil</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --bg:#0e0e0f;--surface:#17171a;--surface2:#1e1e23;
-  --border:#2a2a32;--accent:#c8a96e;
-  --text:#e8e6e0;--muted:#6b6872;
-  --warning-text:#e8b48a;--done-text:#89c49a;
-}
+  :root {
+    --bg: #0e0e0f; --surface: #17171a; --surface2: #1e1e23;
+    --border: #2a2a32; --accent: #c8a96e; --accent2: #7c6fcd;
+    --text: #e8e6e0; --muted: #6b6872; --done: #4a7c59;
+    --done-text: #89c49a; --warning: #c87c4a; --warning-text: #e8b48a;
+    --error: #e07070;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; padding: 40px 20px; }
+  .noise { position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); opacity: 0.4; }
+  .container { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
 
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;padding:40px 20px;}
+  /* HEADER */
+  header { margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 28px; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 5vw, 44px); font-weight: 700; line-height: 1.1; margin-bottom: 14px; }
+  h1 span { color: var(--accent); }
+  .subtitle { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
 
-.container{max-width:900px;margin:auto;}
+  /* ACCUEIL — CHOIX MATIÈRE */
+  #page-accueil { display: block; }
+  #page-erreurs { display: none; }
 
-/* HEADER */
-header{margin-bottom:30px;}
-h1{font-family:'Playfair Display';}
+  .accueil-label { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
 
-/* TOOLBAR */
-.toolbar{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin:15px 0 25px;
-}
+  .matieres-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
 
-.toolbar button{
-  background:var(--surface);
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:8px 10px;
-  cursor:pointer;
-  font-size:11px;
-  font-family:'DM Mono', monospace;
-}
+  .matiere-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 18px 20px; cursor: pointer;
+    transition: all 0.2s; text-align: left; display: flex;
+    flex-direction: column; gap: 8px;
+  }
+  .matiere-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .matiere-name { font-size: 14px; letter-spacing: 0.05em; color: var(--text); }
+  .matiere-count { font-size: 10px; color: var(--muted); }
+  .matiere-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-.toolbar button:hover{
-  border-color:var(--accent);
-  color:var(--accent);
-}
+  /* BACK */
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); cursor: pointer; background: none; border: none;
+    margin-bottom: 28px; transition: color 0.15s; padding: 0;
+    font-family: 'DM Mono', monospace;
+  }
+  .back-btn:hover { color: var(--accent); }
 
-/* CAT */
-.cat{
-  background:var(--surface);
-  border:1px solid var(--border);
-  margin-bottom:10px;
-  border-radius:6px;
-  overflow:hidden;
-}
-.cat-header{
-  padding:10px;
-  display:flex;
-  justify-content:space-between;
-  cursor:pointer;
-}
-.cat-body{display:none;padding:10px;border-top:1px solid var(--border);}
-.cat-body.open{display:block;}
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 28px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; }
+  .stat-value.total { color: var(--text); }
+  .stat-value.review { color: var(--warning-text); }
+  .stat-value.mastered { color: var(--done-text); }
 
-.subcat{
-  padding:5px 10px;
-  font-size:12px;
-  color:var(--muted);
-}
+  /* FILTRES */
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+  .filter-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.08); }
+
+  /* MESSAGE D'ERREUR */
+  .error-message { background: rgba(224,112,112,0.1); border: 1px solid var(--error); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 12px; color: var(--error); display: none; }
+  .error-message.show { display: block; }
+
+  /* CATEGORIES */
+  .cat-section { margin-bottom: 10px; }
+  .cat-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color 0.2s; user-select: none; }
+  .cat-header:hover { border-color: #3a3a44; }
+  .cat-header.open { border-radius: 8px 8px 0 0; border-bottom-color: transparent; }
+  .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cat-name { font-size: 13px; letter-spacing: 0.08em; flex: 1; font-weight: 500; }
+  .cat-count { font-size: 10px; padding: 3px 10px; border-radius: 20px; background: var(--surface2); color: var(--muted); }
+  .cat-toggle { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
+  .cat-header.open .cat-toggle { transform: rotate(180deg); }
+  .cat-body { display: none; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+  .cat-body.open { display: block; }
+
+  /* ERROR ITEMS */
+  .err-item { display: grid; grid-template-columns: 1fr 1fr auto auto; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .err-item:last-child { border-bottom: none; }
+  .err-item:hover { background: var(--surface2); }
+  .err-wrong { font-size: 12px; color: #e07070; word-break: break-word; }
+  .err-wrong::before { content: "✗ "; }
+  .err-right { font-size: 12px; color: var(--done-text); word-break: break-word; }
+  .err-right::before { content: "✓ "; }
+  .err-meta { font-size: 10px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; white-space: nowrap; }
+  .err-revision { color: var(--warning-text); }
+  .err-revision.late { color: var(--error); }
+  .err-actions { display: flex; gap: 6px; align-items: center; }
+  .status-badge { font-size: 9px; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; cursor: pointer; border: 1px solid; transition: all 0.15s; white-space: nowrap; font-family: 'DM Mono', monospace; }
+  .status-badge.revoir { background: rgba(200,124,74,0.15); color: var(--warning-text); border-color: rgba(200,124,74,0.3); }
+  .status-badge.encours { background: rgba(124,111,205,0.15); color: #b8b0f0; border-color: rgba(124,111,205,0.3); }
+  .status-badge.maitrise { background: rgba(74,124,89,0.15); color: var(--done-text); border-color: rgba(74,124,89,0.3); }
+  .del-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 2px 4px; transition: color 0.15s; line-height: 1; }
+  .del-btn:hover { color: #e07070; }
+  .empty-cat { padding: 16px 18px; font-size: 12px; color: var(--muted); font-style: italic; }
+
+  /* FORMULAIRE */
+  .form-section { margin-top: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .form-header { padding: 16px 18px; border-bottom: 1px solid var(--border); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .form-body { padding: 18px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-field { display: flex; flex-direction: column; gap: 5px; }
+  .form-field.full { grid-column: 1 / -1; }
+  .form-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .form-field input, .form-field select { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; padding: 9px 12px; outline: none; transition: border-color 0.15s; width: 100%; }
+  .form-field input:focus, .form-field select:focus { border-color: var(--accent); }
+  .form-field select option { background: #17171a; }
+  .add-btn { width: 100%; padding: 11px; background: transparent; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
+  .add-btn:hover { background: rgba(200,169,110,0.1); }
+  .add-btn.inactive { border-color: var(--border); color: var(--muted); cursor: not-allowed; }
+
+  .reset-btn { margin-top: 40px; display: block; background: transparent; border: 1px solid #2a2a32; color: #3a3a44; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; padding: 10px 20px; cursor: pointer; border-radius: 4px; text-transform: uppercase; transition: all 0.2s; margin-left: auto; }
+  .reset-btn:hover { color: #ff6b6b; border-color: #ff6b6b; }
+
+  @media (max-width: 600px) {
+    .err-item { grid-template-columns: 1fr 1fr; }
+    .err-meta { display: none; }
+    .form-grid { grid-template-columns: 1fr; }
+    .matieres-grid { grid-template-columns: 1fr 1fr; }
+  }
 </style>
 </head>
-
 <body>
-
+<div class="noise"></div>
 <div class="container">
 
-<header>
-  <h1>Suivi des erreurs</h1>
-</header>
+  <header>
+    <div class="eyebrow">CRPE 2026 — Bil</div>
+    <h1>Suivi des <span>Erreurs</span></h1>
+    <div class="subtitle" id="headerSubtitle">Sélectionne une matière pour commencer</div>
+  </header>
 
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <button onclick="addCat()">+ Catégorie</button>
-  <button onclick="editCat()">Modifier Catégorie</button>
-  <button onclick="deleteCat()">Supprimer Catégorie</button>
-  <button onclick="addSubcat()">+ Sous-catégorie</button>
-  <button onclick="editSubcat()">Modifier Sous-cat</button>
-  <button onclick="deleteSubcat()">Supprimer Sous-cat</button>
-</div>
+  <!-- PAGE ACCUEIL -->
+  <div id="page-accueil">
+    <div class="accueil-label">Choisir une matière</div>
+    <div class="matieres-grid" id="matieresGrid"></div>
+  </div>
 
-<div id="cats"></div>
+  <!-- PAGE ERREURS -->
+  <div id="page-erreurs">
+    <button class="back-btn" id="backBtn">← Toutes les matières</button>
+
+    <div class="error-message" id="errorMessage"></div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total</div><div class="stat-value total" id="statTotal">0</div></div>
+      <div class="stat"><div class="stat-label">À revoir</div><div class="stat-value review" id="statReview">0</div></div>
+      <div class="stat"><div class="stat-label">Maîtrisées</div><div class="stat-value mastered" id="statMastered">0</div></div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Toutes</button>
+      <button class="filter-btn" data-filter="À revoir">À revoir</button>
+      <button class="filter-btn" data-filter="En cours">En cours</button>
+      <button class="filter-btn" data-filter="Maîtrisé">Maîtrisées</button>
+    </div>
+
+    <div id="categoriesContainer"></div>
+
+    <div class="form-section">
+      <div class="form-header">Ajouter une erreur</div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Catégorie</label>
+            <select id="fCat"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Sous-catégorie</label>
+            <select id="fSub"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Erreur</label>
+            <input id="fErr" placeholder="ex: hesitation" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Correction</label>
+            <input id="fCor" placeholder="ex: hésitation" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Statut</label>
+            <select id="fStatus">
+              <option>À revoir</option>
+              <option>En cours</option>
+              <option>Maîtrisé</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Révision dans</label>
+            <select id="fRevision">
+              <option value="0">Aujourd'hui</option>
+              <option value="1" selected>1 jour</option>
+              <option value="3">3 jours</option>
+              <option value="7">1 semaine</option>
+              <option value="14">2 semaines</option>
+            </select>
+          </div>
+        </div>
+        <button class="add-btn" id="addBtn">Ajouter l'erreur</button>
+        <button class="add-btn inactive" style="margin-top:8px" disabled>+ Nouvelle sous-catégorie (bientôt)</button>
+      </div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">Réinitialiser les erreurs de cette matière</button>
+  </div>
 
 </div>
 
 <script>
-
-let currentCats = [
-  {
-    nom:"Orthographe",
-    sous_categories:[
-      "a / à",
-      "et / est",
-      "son / sont"
-    ]
-  }
+const MATIERES = [
+  { id: 'francais',  nom: 'Français',   fichier: 'cat-francais.json',  couleur: '#c8a96e' },
+  { id: 'maths',     nom: 'Maths',       fichier: 'cat-maths.json',     couleur: '#5a9fd4' },
+  { id: 'sciences',  nom: 'Sciences',    fichier: 'cat-sciences.json',  couleur: '#7c6fcd' },
+  { id: 'techno',    nom: 'Techno',      fichier: 'cat-techno.json',    couleur: '#ba6fa0' },
+  { id: 'chimie',    nom: 'Chimie',      fichier: 'cat-chimie.json',    couleur: '#5a9fd4' },
+  { id: 'histoire',  nom: 'Histoire',    fichier: 'cat-histoire.json',  couleur: '#c87c4a' },
+  { id: 'geo',       nom: 'Géographie',  fichier: 'cat-geo.json',       couleur: '#6fba8a' },
+  { id: 'emc',       nom: 'EMC',         fichier: 'cat-emc.json',       couleur: '#c8a96e' },
+  { id: 'anglais',   nom: 'Anglais',     fichier: 'cat-anglais.json',   couleur: '#6fba8a' },
+  { id: 'eps',       nom: 'EPS',         fichier: 'cat-eps.json',       couleur: '#c87c4a' },
+  { id: 'cse',       nom: 'CSE',         fichier: 'cat-cse.json',       couleur: '#7c6fcd' },
 ];
 
-let selectedCat = null;
+// CATEGORIES PAR DÉFAUT (si les fichiers JSON sont absents)
+const DEFAULT_CATEGORIES = {
+  francais: { categories: [
+    { nom: "Orthographe", sous_categories: ["Accords", "Homophones", "Pluriels"] },
+    { nom: "Grammaire", sous_categories: ["Conjugaison", "Syntaxe", "Nature des mots"] },
+    { nom: "Vocabulaire", sous_categories: ["Sens propre/figuré", "Familles de mots", "Préfixes/Suffixes"] }
+  ]},
+  maths: { categories: [
+    { nom: "Calcul", sous_categories: ["Opérations", "Fractions", "Pourcentages"] },
+    { nom: "Géométrie", sous_categories: ["Figures", "Périmètres/Aires", "Angles"] },
+    { nom: "Problèmes", sous_categories: ["Modélisation", "Grandeurs", "Logique"] }
+  ]}
+};
 
-/* RENDER */
-function render(){
-  const c = document.getElementById("cats");
-  c.innerHTML="";
+let currentMatiere = null;
+let currentCats = [];
+let currentFilter = 'all';
+let openCats = {};
 
-  currentCats.forEach(cat=>{
-    const div=document.createElement("div");
-    div.className="cat";
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-    div.innerHTML=`
-      <div class="cat-header" onclick="selectCat('${cat.nom}')">
-        <strong>${cat.nom}</strong>
-        <span>${cat.sous_categories.length}</span>
-      </div>
-      <div class="cat-body ${selectedCat===cat.nom?'open':''}">
-        ${cat.sous_categories.map(s=>`<div class="subcat">${s}</div>`).join("")}
-      </div>
-    `;
+function getData(matiereId) {
+  try { return JSON.parse(localStorage.getItem('bil_err_' + matiereId) || '[]'); }
+  catch { return []; }
+}
 
-    c.appendChild(div);
+function saveData(matiereId, d) { localStorage.setItem('bil_err_' + matiereId, JSON.stringify(d)); }
+
+function formatDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+}
+
+function revisionLabel(ts) {
+  if (!ts) return '';
+  const now = new Date(); now.setHours(0,0,0,0);
+  const rev = new Date(ts); rev.setHours(0,0,0,0);
+  const diff = Math.round((rev - now) / 86400000);
+  if (diff < 0) return 'En retard';
+  if (diff === 0) return "Aujourd'hui";
+  if (diff === 1) return 'Demain';
+  return 'Dans ' + diff + 'j';
+}
+
+function isLate(ts) {
+  if (!ts) return false;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const rev = new Date(ts); rev.setHours(0,0,0,0);
+  return rev < now;
+}
+
+function statusClass(s) {
+  if (s === 'À revoir') return 'revoir';
+  if (s === 'En cours') return 'encours';
+  return 'maitrise';
+}
+
+function showError(msg) {
+  const errorDiv = document.getElementById('errorMessage');
+  errorDiv.textContent = msg;
+  errorDiv.classList.add('show');
+  setTimeout(() => errorDiv.classList.remove('show'), 4000);
+}
+
+// ACCUEIL
+function renderAccueil() {
+  const grid = document.getElementById('matieresGrid');
+  grid.innerHTML = MATIERES.map(m => {
+    const data = getData(m.id);
+    const aRevoir = data.filter(e => e.status === 'À revoir').length;
+    return `
+      <div class="matiere-btn" data-matiere="${m.id}" style="border-color: rgba(${hexToRgb(m.couleur)}, 0.2)">
+        <div class="matiere-dot" style="background:${m.couleur}"></div>
+        <div class="matiere-name">${escapeHtml(m.nom)}</div>
+        <div class="matiere-count">${data.length} erreur${data.length > 1 ? 's' : ''} · ${aRevoir} à revoir</div>
+      </div>`;
+  }).join('');
+  
+  document.querySelectorAll('.matiere-btn').forEach(btn => {
+    btn.addEventListener('click', () => goMatiere(btn.dataset.matiere));
   });
 }
 
-function selectCat(name){
-  selectedCat = name;
-  render();
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
 }
 
-/* CAT */
-function addCat(){
-  const name = prompt("Nom de la catégorie ?");
-  if(!name) return;
-  currentCats.push({nom:name,sous_categories:[]});
-  render();
+function goAccueil() {
+  currentMatiere = null;
+  currentCats = [];
+  openCats = {};
+  document.getElementById('page-accueil').style.display = 'block';
+  document.getElementById('page-erreurs').style.display = 'none';
+  document.getElementById('headerSubtitle').textContent = 'Sélectionne une matière pour commencer';
+  renderAccueil();
 }
 
-function editCat(){
-  const old = prompt("Nom catégorie ?");
-  const cat = currentCats.find(c=>c.nom===old);
-  if(!cat) return alert("introuvable");
-  const neu = prompt("Nouveau nom ?",cat.nom);
-  if(!neu) return;
-  cat.nom = neu;
-  render();
+async function goMatiere(id) {
+  const m = MATIERES.find(x => x.id === id);
+  if (!m) return;
+  currentMatiere = m;
+  currentFilter = 'all';
+  
+  // Nettoyer openCats avant nouveau chargement
+  openCats = {};
+
+  try {
+    const res = await fetch(m.fichier);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    currentCats = json.categories || [];
+  } catch(e) {
+    console.warn('Impossible de charger', m.fichier, e);
+    // Utiliser les catégories par défaut si disponibles
+    if (DEFAULT_CATEGORIES[id]) {
+      currentCats = DEFAULT_CATEGORIES[id].categories;
+      showError(`Fichier ${m.fichier} introuvable. Utilisation des catégories par défaut.`);
+    } else {
+      currentCats = [];
+      showError(`Impossible de charger les catégories pour ${m.nom}. Vérifie que ${m.fichier} existe.`);
+    }
+  }
+
+  // Mettre à jour l'interface
+  document.getElementById('page-accueil').style.display = 'none';
+  document.getElementById('page-erreurs').style.display = 'block';
+  document.getElementById('headerSubtitle').textContent = m.nom + ' — erreurs à l\'écrit';
+
+  // Réinitialiser les filtres visuels
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+
+  populateForm();
+  renderErreurs();
 }
 
-function deleteCat(){
-  const name = prompt("Nom catégorie ?");
-  currentCats = currentCats.filter(c=>c.nom!==name);
-  render();
+function populateForm() {
+  const catSel = document.getElementById('fCat');
+  if (currentCats.length === 0) {
+    catSel.innerHTML = '<option>Aucune catégorie disponible</option>';
+    document.getElementById('fSub').innerHTML = '';
+    return;
+  }
+  catSel.innerHTML = currentCats.map(c => `<option>${escapeHtml(c.nom)}</option>`).join('');
+  updateSubcats();
 }
 
-/* SUBCAT */
-function addSubcat(){
-  if(!selectedCat) return alert("choisis une catégorie");
-  const cat = currentCats.find(c=>c.nom===selectedCat);
-  const name = prompt("Sous-catégorie ?");
-  if(!name) return;
-  cat.sous_categories.push(name);
-  render();
+function updateSubcats() {
+  const catName = document.getElementById('fCat').value;
+  const cat = currentCats.find(c => c.nom === catName);
+  const subSel = document.getElementById('fSub');
+  if (cat && cat.sous_categories && cat.sous_categories.length) {
+    subSel.innerHTML = cat.sous_categories.map(s => `<option>${escapeHtml(s)}</option>`).join('');
+  } else {
+    subSel.innerHTML = '<option>Aucune</option>';
+  }
 }
 
-function editSubcat(){
-  if(!selectedCat) return;
-  const cat = currentCats.find(c=>c.nom===selectedCat);
-  const old = prompt("Sous-cat ?");
-  const i = cat.sous_categories.indexOf(old);
-  if(i===-1) return;
-  const neu = prompt("nouveau nom ?",old);
-  if(!neu) return;
-  cat.sous_categories[i]=neu;
-  render();
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderErreurs();
 }
 
-function deleteSubcat(){
-  if(!selectedCat) return;
-  const cat = currentCats.find(c=>c.nom===selectedCat);
-  const name = prompt("Sous-cat ?");
-  cat.sous_categories = cat.sous_categories.filter(s=>s!==name);
-  render();
+function toggleCat(name) {
+  openCats[name] = !openCats[name];
+  renderErreurs();
 }
 
-render();
+function cycleStatus(id) {
+  const data = getData(currentMatiere.id);
+  const idx = data.findIndex(e => e.id === id);
+  if (idx === -1) return;
+  const order = ['À revoir', 'En cours', 'Maîtrisé'];
+  const cur = order.indexOf(data[idx].status);
+  data[idx].status = order[(cur + 1) % 3];
+  saveData(currentMatiere.id, data);
+  renderErreurs();
+}
 
+function deleteError(id) {
+  if (confirm('Supprimer cette erreur ?')) {
+    const data = getData(currentMatiere.id).filter(e => e.id !== id);
+    saveData(currentMatiere.id, data);
+    renderErreurs();
+  }
+}
+
+function addError() {
+  if (!currentCats.length) {
+    showError("Aucune catégorie disponible. Vérifie les fichiers JSON.");
+    return;
+  }
+  
+  const cat = document.getElementById('fCat').value;
+  const sub = document.getElementById('fSub').value;
+  const err = document.getElementById('fErr').value.trim();
+  const cor = document.getElementById('fCor').value.trim();
+  const status = document.getElementById('fStatus').value;
+  const days = parseInt(document.getElementById('fRevision').value);
+  
+  if (!err || !cor) { 
+    showError("Remplis l'erreur et la correction."); 
+    return; 
+  }
+  if (cat === 'Aucune catégorie disponible') {
+    showError("Aucune catégorie valide disponible.");
+    return;
+  }
+  
+  const revDate = new Date(); 
+  revDate.setDate(revDate.getDate() + days);
+  const data = getData(currentMatiere.id);
+  data.unshift({ 
+    id: Date.now().toString(), 
+    cat, 
+    sub: sub === 'Aucune' ? '' : sub, 
+    err, 
+    cor, 
+    status, 
+    added: Date.now(), 
+    revision: revDate.getTime() 
+  });
+  saveData(currentMatiere.id, data);
+  
+  document.getElementById('fErr').value = '';
+  document.getElementById('fCor').value = '';
+  document.getElementById('fStatus').value = 'À revoir';
+  document.getElementById('fRevision').value = '1';
+  
+  openCats[cat] = true;
+  renderErreurs();
+}
+
+function resetMatiere() {
+  if (confirm('⚠️ Supprimer TOUTES les erreurs de ' + currentMatiere.nom + ' ? Cette action est irréversible.')) {
+    localStorage.removeItem('bil_err_' + currentMatiere.id);
+    renderErreurs();
+    showError(`Toutes les erreurs de ${currentMatiere.nom} ont été supprimées.`);
+  }
+}
+
+function renderErreurs() {
+  if (!currentMatiere) return;
+  const data = getData(currentMatiere.id);
+  
+  document.getElementById('statTotal').textContent = data.length;
+  document.getElementById('statReview').textContent = data.filter(e => e.status === 'À revoir').length;
+  document.getElementById('statMastered').textContent = data.filter(e => e.status === 'Maîtrisé').length;
+
+  const container = document.getElementById('categoriesContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (currentCats.length === 0) {
+    container.innerHTML = '<div class="empty-cat" style="text-align:center;padding:40px;">⚠️ Aucune catégorie chargée. Vérifie les fichiers JSON.</div>';
+    return;
+  }
+
+  currentCats.forEach(cat => {
+    let items = data.filter(e => e.cat === cat.nom);
+    const allItems = [...items];
+    if (currentFilter !== 'all') items = items.filter(e => e.status === currentFilter);
+    const isOpen = openCats[cat.nom] === true;
+    const color = currentMatiere.couleur;
+
+    const section = document.createElement('div');
+    section.className = 'cat-section';
+    
+    let itemsHtml = '';
+    if (items.length === 0) {
+      itemsHtml = `<div class="empty-cat">${currentFilter === 'all' ? 'Aucune erreur dans cette catégorie' : 'Aucune erreur avec ce filtre'}</div>`;
+    } else {
+      itemsHtml = items.map(e => {
+        const late = isLate(e.revision);
+        return `
+          <div class="err-item">
+            <div class="err-wrong">${escapeHtml(e.err)}</div>
+            <div class="err-right">${escapeHtml(e.cor)}${e.sub ? '<br><span style="font-size:10px;color:var(--muted)">' + escapeHtml(e.sub) + '</span>' : ''}</div>
+            <div class="err-meta">
+              <span>${formatDate(e.added)}</span>
+              <span class="err-revision ${late ? 'late' : ''}">${revisionLabel(e.revision)}</span>
+            </div>
+            <div class="err-actions">
+              <span class="status-badge ${statusClass(e.status)}" data-id="${e.id}">${e.status}</span>
+              <button class="del-btn" data-id="${e.id}" title="Supprimer">×</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+    
+    section.innerHTML = `
+      <div class="cat-header ${isOpen ? 'open' : ''}" data-cat="${escapeHtml(cat.nom)}">
+        <div class="cat-dot" style="background:${color}"></div>
+        <div class="cat-name">${escapeHtml(cat.nom)}</div>
+        <div class="cat-count">${allItems.length}</div>
+        <div class="cat-toggle">▼</div>
+      </div>
+      <div class="cat-body ${isOpen ? 'open' : ''}">
+        ${itemsHtml}
+      </div>`;
+    
+    container.appendChild(section);
+  });
+  
+  // Réattacher les événements
+  document.querySelectorAll('.cat-header').forEach(header => {
+    const catName = header.dataset.cat;
+    header.removeEventListener('click', () => toggleCat(catName));
+    header.addEventListener('click', () => toggleCat(catName));
+  });
+  
+  document.querySelectorAll('.status-badge').forEach(badge => {
+    badge.removeEventListener('click', () => cycleStatus(badge.dataset.id));
+    badge.addEventListener('click', () => cycleStatus(badge.dataset.id));
+  });
+  
+  document.querySelectorAll('.del-btn').forEach(btn => {
+    btn.removeEventListener('click', () => deleteError(btn.dataset.id));
+    btn.addEventListener('click', () => deleteError(btn.dataset.id));
+  });
+}
+
+// INITIALISATION DES ÉVÉNEMENTS
+function init() {
+  renderAccueil();
+  
+  document.getElementById('backBtn').addEventListener('click', goAccueil);
+  document.getElementById('addBtn').addEventListener('click', addError);
+  document.getElementById('resetBtn').addEventListener('click', resetMatiere);
+  document.getElementById('fCat').addEventListener('change', updateSubcats);
+  
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => setFilter(btn.dataset.filter, btn));
+  });
+}
+
+init();
 </script>
-
 </body>
 </html>
