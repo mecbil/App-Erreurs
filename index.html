@@ -411,7 +411,15 @@ function renderErreurs() {
     section.innerHTML = `
       <div class="cat-header ${isOpen ? 'open' : ''}" onclick="toggleCat('${cat.nom}')">
         <div class="cat-dot" style="background:${color}"></div>
-        <div class="cat-name">${cat.nom}</div>
+        <div class="cat-name">
+  	  ${cat.nom}
+
+  	  <span class="cat-actions">
+    	    <button class="mini-btn">✏️</button>
+    	    <button class="mini-btn">🗑️</button>
+    	    <button class="mini-btn">➕</button>
+  	  </span>
+	</div>
         <div class="cat-count">${allItems.length}</div>
         <div class="cat-toggle">▼</div>
       </div>
