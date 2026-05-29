@@ -1,8 +1,0 @@
-[
-  { "id": "francais", "nom": "Français", "fichier": "cat-francais.json", "couleur": "#c8a96e" },
-  { "id": "maths", "nom": "Maths", "fichier": "cat-maths.json", "couleur": "#5a9fd4" },
-  { "id": "sciences", "nom": "Sciences", "fichier": "cat-sciences.json", "couleur": "#7c6fcd" },
-  { "id": "techno", "nom": "Techno", "fichier": "cat-techno.json", "couleur": "#ba6fa0" },
-  { "id": "chimie", "nom": "Chimie", "fichier": "cat-chimie.json", "couleur": "#5a9fd4" },
-  { "id": "histoire", "nom": "Histoire", "fichier": "cat-histoire.json", "couleur": "#c87c4a" },
-  {
