@@ -5,4 +5,9 @@
   { "id": "techno", "nom": "Techno", "fichier": "cat-techno.json", "couleur": "#ba6fa0" },
   { "id": "chimie", "nom": "Chimie", "fichier": "cat-chimie.json", "couleur": "#5a9fd4" },
   { "id": "histoire", "nom": "Histoire", "fichier": "cat-histoire.json", "couleur": "#c87c4a" },
-  {
+  { "id": "geo", "nom": "Géographie", "fichier": "cat-geo.json", "couleur": "#6fba8a" },
+  { "id": "emc", "nom": "EMC", "fichier": "cat-emc.json", "couleur": "#c8a96e" },
+  { "id": "anglais", "nom": "Anglais", "fichier": "cat-anglais.json", "couleur": "#6fba8a" },
+  { "id": "eps", "nom": "EPS", "fichier": "cat-eps.json", "couleur": "#c87c4a" },
+  { "id": "cse", "nom": "CSE", "fichier": "cat-cse.json", "couleur": "#7c6fcd" }
+]
